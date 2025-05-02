@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const generatePKCE = require("../utils/generatePKCE");
 const { default: axios } = require("axios");
-const { getUserProfile } = require("../api/getUserProfile");
+const { getUserProfile } = require("../api/api_fetch_functions");
 require("dotenv").config();
 
 const pkceStore = {};
@@ -27,14 +27,12 @@ exports.getAuth = asyncHandler(async (req, res) => {
 
 exports.getCallback = asyncHandler(async (req, res, next) => {
   const { code, state } = req.query;
-  console.log(code, state);
 
   if (!code) {
     return res.status(400).send("No code provided");
   }
 
   const code_verifier = pkceStore[state];
-  console.log("i was saved: ", code_verifier);
 
   const basicAuthToken = Buffer.from(
     `${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`
@@ -58,12 +56,22 @@ exports.getCallback = asyncHandler(async (req, res, next) => {
   );
   const { access_token, refresh_token, expires_in } = response.data;
 
-  console.log("Access Token:", access_token);
-  console.log("Refresh Token:", refresh_token);
-
   const authenticated_user_details = await getUserProfile(access_token);
   const { id, username, profile_image_url } =
     authenticated_user_details.data.data;
+
+  res.cookie("x_token", access_token, {
+    httpOnly: true,
+    secure: true, // only send cookie over HTTPS in prod
+    maxAge: expires_in * 1000, // expires_in is usually in seconds
+    sameSite: "lax",
+  });
+  res.cookie("user_id", id, {
+    httpOnly: true,
+    secure: true, // only send cookie over HTTPS in prod
+    maxAge: expires_in * 1000, // expires_in is usually in seconds
+    sameSite: "lax",
+  });
 
   const params = new URLSearchParams({
     username,

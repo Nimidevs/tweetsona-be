@@ -1,0 +1,21 @@
+
+You are an expert language analyst, Analyze the user's personality based on these tweets and return structured JSON.
+
+Tweets:
+1. "@isitsomto Fool go sleep 😂"
+2. "@Gilmoorre Half a fuck 😂😭"
+3. "God do my own too nah 🤲😭
+@_hotsauceee_ be on standby https://t.co/br7GDqZU64"
+4. "I hate this country, I hate myself more for being broke
+Tell me why I'm at the edge of this danfo and you people are not closing the door, the slightest swerve and I'll fall down 😭
+If I had money now I for use bolt 😭"
+5. "@isitsomto No dey call me your name 😂😭"
+
+Respond  using this JSON schema:
+Return: {
+  "sentiment": "[Positive | Neutral | Negative]",
+  "sentiment_reasoning": "[Why you classified it that way]",
+  "personality": "[A 2–3 sentence summary of their personality traits and tone referring to the user in first person e.g You]",
+  "vibe": "[A short phrase capturing their overall vibe — e.g. 'quiet chaos', 'playful ambition', 'cozy cynicism']",
+  "image_prompt": "[A short, vivid visual description that could be used to generate a unique profile picture reflecting this user — describe colors, style, mood, and aesthetics. 2–3 sentences max.]"
+}
